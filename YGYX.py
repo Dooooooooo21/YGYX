@@ -5,8 +5,7 @@
 # @File    : YGYX.py
 # @Desc:
 
-import matplotlib.image as mpig
-import matplotlib.pyplot as plt
+import cv2 as cv
 from PIL import Image
 import numpy as np
 from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
@@ -24,22 +23,17 @@ def img_data():
     # content = mpig.imread(basepath + 'label/5.png')
 
     # PIL
-    content = np.array(Image.open(base_train_path + 'label/5.png'))
+    # content = np.array(Image.open(base_train_path + 'label/5.png'))
+
+    content = cv.imread(base_train_path + 'image/5.tif')
 
     # keras.preprocessing.image
-    # content = load_img(basepath + 'label/5.png')
+    # content = load_img(base_train_path + 'label/5.png')
     # content = img_to_array(content)
     print(content)
 
 
-# 数据生成器
-def data_generator(train_dir, test_dir):
-    train_datagen = ImageDataGenerator(rescale=1. / 255)
-    test_datagen = ImageDataGenerator(rescale=1. / 255)
-    train_generator = train_datagen.flow_from_directory(train_dir, batch_size=32, class_mode='categorical')
-    test_generator = test_datagen.flow_from_directory(test_dir, batch_size=32, class_mode='categorical')
+img_data()
 
-    return train_generator, test_generator
-
-
-data_generator(base_train_path + 'image', base_test_path)
+for i in range(1, 8 + 1):
+    print(i)
