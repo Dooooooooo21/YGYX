@@ -12,6 +12,13 @@ def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=
     img_input, levels = encoder(input_height=input_height, input_width=input_width)
     [f1, f2, f3, f4, f5] = levels
 
+    # o = f5
+    # o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
+    # o = (Conv2D(512, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
+    # o = (BatchNormalization())(o)
+    # o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    # o = (concatenate([o, f4], axis=MERGE_AXIS))
+
     o = f4
     # 26,26,512
     o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
