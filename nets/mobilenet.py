@@ -1,7 +1,5 @@
-from tensorflow.keras.models import *
-from tensorflow.keras.layers import *
+from tensorflow.keras.layers import ZeroPadding2D, Conv2D, BatchNormalization, Activation, DepthwiseConv2D, Input
 import tensorflow.keras.backend as K
-import tensorflow.keras as keras
 
 IMAGE_ORDERING = 'channels_last'
 

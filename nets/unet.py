@@ -1,5 +1,6 @@
-from tensorflow.keras.models import *
-from tensorflow.keras.layers import *
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import ZeroPadding2D, Conv2D, BatchNormalization, UpSampling2D, concatenate, Softmax, \
+    Reshape
 from nets.mobilenet import get_mobilenet_encoder
 
 IMAGE_ORDERING = 'channels_last'

@@ -1,8 +1,7 @@
 from nets.unet import mobilenet_unet
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 from PIL import Image
-import tensorflow.keras as keras
 from tensorflow.keras import backend as K
 import numpy as np
 import cv2 as cv
@@ -72,9 +71,9 @@ if __name__ == "__main__":
     # weights_path = keras.utils.get_file(model_name, weight_path)
     # print(weight_path)
     # model.load_weights(weights_path, by_name=True)
-    model.load_weights('./models/ep019-loss0.411-val_loss0.528.h5')
+    model.load_weights('./models/ep011-loss0.421-val_loss0.513.h5')
 
-    # model.summary()
+    model.summary()
     # 打开数据集的txt
     with open(r"./data/train_data.txt", "r") as f:
         lines = f.readlines()
@@ -85,7 +84,7 @@ if __name__ == "__main__":
     np.random.shuffle(lines)
     np.random.seed(None)
 
-    # 90%用于训练，10%用于估计。
+    # 95%用于训练，5%用于估计
     num_val = int(len(lines) * 0.05)
     num_train = len(lines) - num_val
 

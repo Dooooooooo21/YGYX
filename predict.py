@@ -1,6 +1,4 @@
 from train import *
-from tensorflow.keras import Model
-import os
 import cv2
 import numpy as np
 
@@ -47,7 +45,7 @@ def predict_all(input_path, output_path, model, n_class, weights_path=None):
 
 if __name__ == "__main__":
     base_test_path = 'C:/Users/Dooooooooo21/Desktop/project/YGYX/test/'
-    weights_path = './models/ep019-loss0.411-val_loss0.528.h5'
+    weights_path = './models/ep005-loss0.528-val_loss0.559_val_acc0.79.h5'
     input_path = base_test_path + 'image_A/'
     output_path = base_test_path + 'labels/'
     n_class = 8
