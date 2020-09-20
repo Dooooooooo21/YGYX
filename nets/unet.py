@@ -2,12 +2,13 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import ZeroPadding2D, Conv2D, BatchNormalization, UpSampling2D, concatenate, Softmax, \
     Reshape
 from nets.mobilenet import get_mobilenet_encoder
+from nets.resnet50 import ResNet50
 
 IMAGE_ORDERING = 'channels_last'
 MERGE_AXIS = -1
 
 
-def _unet(n_classes, encoder, l1_skip_conn=True, input_height=256, input_width=256):
+def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=256):
     img_input, levels = encoder(input_height=input_height, input_width=input_width)
     [f1, f2, f3, f4, f5] = levels
 
@@ -60,6 +61,6 @@ def _unet(n_classes, encoder, l1_skip_conn=True, input_height=256, input_width=2
 
 
 def mobilenet_unet(n_classes, input_height=256, input_width=256, encoder_level=3):
-    model = _unet(n_classes, get_mobilenet_encoder, input_height=input_height, input_width=input_width)
-    model.model_name = "mobilenet_unet"
+    model = _unet(n_classes, ResNet50, input_height=input_height, input_width=input_width)
+    model.model_name = "resnet50_unet"
     return model

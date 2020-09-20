@@ -71,9 +71,9 @@ if __name__ == "__main__":
     # weights_path = keras.utils.get_file(model_name, weight_path)
     # print(weight_path)
     # model.load_weights(weights_path, by_name=True)
-    model.load_weights('./models/ep011-loss0.421-val_loss0.513.h5')
+    # model.load_weights('./models/ep011-loss0.421-val_loss0.513.h5')
 
-    model.summary()
+    # model.summary()
     # 打开数据集的txt
     with open(r"./data/train_data.txt", "r") as f:
         lines = f.readlines()
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     model.compile(loss=loss,
                   optimizer=Adam(lr=1e-3),
                   metrics=['accuracy'])
-    batch_size = 14
+    batch_size = 12
     print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
     # 开始训练
