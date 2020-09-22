@@ -24,7 +24,25 @@ def predict(image_file, index, model, output_path, n_class, weights_path=None):
     for i in range(256):
         for j in range(256):
             save_img[i][j] = matches[int(seg_img[i][j])]
+
+    # 对预测结果进行处理，如果某一分类占比大于89%，将图片全改成该类别
+    save_img_sec = np.zeros((256, 256), dtype=np.uint16)
+    flag = False
+    for num in matches:
+        tmp = len(save_img[save_img == num]) / 65536
+        if tmp > 0.89:
+            save_img_sec[:, :] = num
+            flag = True
+            break
+
+    # 原预测结果输出
     cv2.imwrite(os.path.join(output_path, index + ".png"), save_img)
+
+    # 处理后的预测结果输出
+    if flag:
+        cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img_sec)
+    else:
+        cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img)
 
 
 def predict_all(input_path, output_path, model, n_class, weights_path=None):
@@ -45,9 +63,10 @@ def predict_all(input_path, output_path, model, n_class, weights_path=None):
 
 if __name__ == "__main__":
     base_test_path = 'C:/Users/Dooooooooo21/Desktop/project/YGYX/test/'
-    weights_path = './models/ep005-loss0.528-val_loss0.559_val_acc0.79.h5'
+    weights_path = './models/ep024-loss0.400-val_loss0.528_0.81.h5'
     input_path = base_test_path + 'image_A/'
     output_path = base_test_path + 'labels/'
+    output_path_sec = base_test_path + 'labels_sec/'
     n_class = 8
 
     model = mobilenet_unet(n_class)

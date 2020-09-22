@@ -115,7 +115,7 @@ if __name__ == "__main__":
     model.compile(loss=loss,
                   optimizer=Adam(lr=1e-3),
                   metrics=['accuracy'])
-    batch_size = 12
+    batch_size = 11
     print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
     # 开始训练
