@@ -1,6 +1,6 @@
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import ZeroPadding2D, Conv2D, BatchNormalization, UpSampling2D, concatenate, Softmax, \
-    Reshape
+    Reshape, Conv2DTranspose
 from nets.mobilenet import get_mobilenet_encoder
 from nets.resnet50 import ResNet50
 
@@ -12,21 +12,21 @@ def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=
     img_input, levels = encoder(input_height=input_height, input_width=input_width)
     [f1, f2, f3, f4, f5] = levels
 
-    o = f5
-    o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
-    o = (Conv2D(1024, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
-    o = (BatchNormalization())(o)
-    o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
-    o = (concatenate([o, f4], axis=MERGE_AXIS))
+    # o = f5
+    # o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
+    # o = (Conv2D(1024, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
+    # o = (BatchNormalization())(o)
+    # o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    # o = (concatenate([o, f4], axis=MERGE_AXIS))
 
-    # o = f4
+    o = f4
     # 26,26,512
     o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
     o = (Conv2D(512, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
     o = (BatchNormalization())(o)
 
     # 52,52,512
-    o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    o = (Conv2DTranspose((2, 2), data_format=IMAGE_ORDERING))(o)
     # 52,52,768
     o = (concatenate([o, f3], axis=MERGE_AXIS))
     o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
@@ -35,7 +35,7 @@ def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=
     o = (BatchNormalization())(o)
 
     # 104,104,256
-    o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    o = (Conv2DTranspose((2, 2), data_format=IMAGE_ORDERING))(o)
     # 104,104,384
     o = (concatenate([o, f2], axis=MERGE_AXIS))
     o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
@@ -43,7 +43,7 @@ def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=
     o = (Conv2D(128, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
     o = (BatchNormalization())(o)
     # 208,208,128
-    o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    o = (Conv2DTranspose((2, 2), data_format=IMAGE_ORDERING))(o)
 
     if l1_skip_conn:
         o = (concatenate([o, f1], axis=MERGE_AXIS))
@@ -52,7 +52,7 @@ def _unet(n_classes, encoder, l1_skip_conn=False, input_height=256, input_width=
     o = (Conv2D(64, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
     o = (BatchNormalization())(o)
 
-    o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+    o = (Conv2DTranspose((2, 2), data_format=IMAGE_ORDERING))(o)
     o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
     o = (Conv2D(32, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
     o = (BatchNormalization())(o)

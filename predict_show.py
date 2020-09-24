@@ -9,6 +9,7 @@ from train import *
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from nets.unet_ori import _unet
 
 import os
 
@@ -84,15 +85,15 @@ def predict_and_deal(image_file, index, model, output_path, n_class, weights_pat
 
 
 if __name__ == "__main__":
-    file = '151.tif'
+    file = '176138.tif'
 
     base_test_path = 'C:/Users/Dooooooooo21/Desktop/project/YGYX/train/'
-    weights_path = './models/ep024-loss0.400-val_loss0.528_0.81.h5'
+    weights_path = './models/ep020-loss0.317-val_loss0.494_0.8242.h5'
     input_path = base_test_path + 'image/' + file
     output_path = base_test_path + 'labels/'
     n_class = 8
 
     index, _ = os.path.splitext(file)
-    model = mobilenet_unet(n_class)
+    model = _unet(n_class)
     model.load_weights(weights_path)  # 读取训练的权重
-    predict_and_deal(input_path, index, model, output_path, n_class)
+    predict(input_path, index, model, output_path, n_class)

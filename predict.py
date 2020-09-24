@@ -1,10 +1,11 @@
 from train import *
 import cv2
 import numpy as np
+from nets.unet_ori import _unet
 
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 
 def predict(image_file, index, model, output_path, n_class, weights_path=None):
@@ -13,7 +14,7 @@ def predict(image_file, index, model, output_path, n_class, weights_path=None):
     if weights_path is not None:
         model.load_weights(weights_path)
     img = cv2.imread(image_file).astype(np.float32)
-    img = np.float32(img) / 255
+    img = np.float32(img) / 127.5 - 1
     pr = model.predict(np.array([img]))[0]
     pr = pr.reshape((256, 256, n_class)).argmax(axis=2)
     seg_img = np.zeros((256, 256), dtype=np.uint16)
@@ -25,24 +26,24 @@ def predict(image_file, index, model, output_path, n_class, weights_path=None):
         for j in range(256):
             save_img[i][j] = matches[int(seg_img[i][j])]
 
-    # 对预测结果进行处理，如果某一分类占比大于89%，将图片全改成该类别
-    save_img_sec = np.zeros((256, 256), dtype=np.uint16)
-    flag = False
-    for num in matches:
-        tmp = len(save_img[save_img == num]) / 65536
-        if tmp > 0.89:
-            save_img_sec[:, :] = num
-            flag = True
-            break
-
     # 原预测结果输出
     cv2.imwrite(os.path.join(output_path, index + ".png"), save_img)
 
+    # 对预测结果进行处理，如果某一分类占比大于89%，将图片全改成该类别
+    # save_img_sec = np.zeros((256, 256), dtype=np.uint16)
+    # flag = False
+    # for num in matches:
+    #     tmp = len(save_img[save_img == num]) / 65536
+    #     if tmp > 0.89:
+    #         save_img_sec[:, :] = num
+    #         flag = True
+    #         break
+
     # 处理后的预测结果输出
-    if flag:
-        cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img_sec)
-    else:
-        cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img)
+    # if flag:
+    #     cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img_sec)
+    # else:
+    #     cv2.imwrite(os.path.join(output_path_sec, index + ".png"), save_img)
 
 
 def predict_all(input_path, output_path, model, n_class, weights_path=None):
@@ -63,12 +64,12 @@ def predict_all(input_path, output_path, model, n_class, weights_path=None):
 
 if __name__ == "__main__":
     base_test_path = 'C:/Users/Dooooooooo21/Desktop/project/YGYX/test/'
-    weights_path = './models/ep024-loss0.400-val_loss0.528_0.81.h5'
+    weights_path = './models/ep020-loss0.317-val_loss0.494_0.8242.h5'
     input_path = base_test_path + 'image_A/'
     output_path = base_test_path + 'labels/'
     output_path_sec = base_test_path + 'labels_sec/'
     n_class = 8
 
-    model = mobilenet_unet(n_class)
+    model = _unet(n_class)
     model.load_weights(weights_path)  # 读取训练的权重
     predict_all(input_path, output_path, model, n_class, weights_path)

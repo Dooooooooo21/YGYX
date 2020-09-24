@@ -1,8 +1,8 @@
 from nets.unet import mobilenet_unet
+from nets.unet_ori import _unet
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 from PIL import Image
-from tensorflow.keras import backend as K
 import numpy as np
 import cv2 as cv
 
@@ -31,7 +31,7 @@ def generate_arrays_from_file(lines, batch_size):
             img = cv.imread(base_train_path + 'image/' + name)
             img = img.astype(np.int32)
             # img = img.resize((WIDTH, HEIGHT))
-            img = img / 255
+            img = img / 127.5 - 1
             X_train.append(img)
 
             name = (lines[i].split(',')[1]).replace("\n", "")
@@ -55,32 +55,20 @@ def generate_arrays_from_file(lines, batch_size):
         yield (np.array(X_train), np.array(Y_train))
 
 
-def loss(y_true, y_pred):
-    loss = K.categorical_crossentropy(y_true, y_pred)
-    return loss
-
-
 if __name__ == "__main__":
     model_dir = "models/"
     # 获取model
-    model = mobilenet_unet(n_classes=NCLASSES, input_height=HEIGHT, input_width=WIDTH)
-    # BASE_WEIGHT_PATH = ('https://github.com/fchollet/deep-learning-models/releases/download/v0.6/')
-    # model_name = 'mobilenet_%s_%d_tf_no_top.h5' % ('1_0', 224)
+    model = _unet(n_classes=NCLASSES, input_height=HEIGHT, input_width=WIDTH)
+    # model.load_weights('./models/ep023-loss0.510-val_loss0.569.h5')
 
-    # weight_path = BASE_WEIGHT_PATH + model_name
-    # weights_path = keras.utils.get_file(model_name, weight_path)
-    # print(weight_path)
-    # model.load_weights(weights_path, by_name=True)
-    # model.load_weights('./models/ep011-loss0.421-val_loss0.513.h5')
-
-    # model.summary()
+    model.summary()
     # 打开数据集的txt
     with open(r"./data/train_data.txt", "r") as f:
         lines = f.readlines()
 
     # 打乱行，这个txt主要用于帮助读取数据来训练
     # 打乱的数据更有利于训练
-    np.random.seed(10101)
+    np.random.seed(2333)
     np.random.shuffle(lines)
     np.random.seed(None)
 
@@ -112,10 +100,10 @@ if __name__ == "__main__":
     )
 
     # 交叉熵
-    model.compile(loss=loss,
-                  optimizer=Adam(lr=1e-3),
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=Adam(lr=1e-4),
                   metrics=['accuracy'])
-    batch_size = 11
+    batch_size = 14
     print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
     # 开始训练
