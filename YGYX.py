@@ -23,9 +23,9 @@ def img_data():
     # content = mpig.imread(basepath + 'label/5.png')
 
     # PIL
-    # content = np.array(Image.open(base_train_path + 'label/5.png'))
+    content = np.array(Image.open(base_train_path + 'label_aug/101_2.png'))
 
-    content = cv.imread(base_train_path + 'image/5.tif')
+    # content = cv.imread(base_train_path + 'images/1_3_2.tif')
 
     # keras.preprocessing.image
     # content = load_img(base_train_path + 'label/5.png')
@@ -35,5 +35,3 @@ def img_data():
 
 img_data()
 
-for i in range(1, 8 + 1):
-    print(i)

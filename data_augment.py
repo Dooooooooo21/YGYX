@@ -7,6 +7,8 @@
 
 import glob
 import cv2
+from PIL import Image
+import numpy as np
 
 from albumentations import (
     Flip,
@@ -42,36 +44,37 @@ def main():
     mask_path = base_train_path + 'label/*.png'
 
     # 增强结果输出目录
-    augtrain_path = base_train_path + 'images_aug'
-    augmask_path = base_train_path + 'labels_aug'
+    augtrain_path = base_train_path + 'image_aug/'
+    augmask_path = base_train_path + 'label_aug/'
 
     train_img, masks = data_num(train_path, mask_path)
     for data in range(len(train_img)):
+        file_name = train_img[data].split('\\')[1].split('.')[0]
         image = cv2.imread(train_img[data])
-        mask = cv2.imread(masks[data])
+        mask = np.array(Image.open(masks[data]))
 
         # 水平翻转
         augmented_1 = HorizontalFlip(p=1)(image=image, mask=mask)
         aug_image_1 = augmented_1['image']
-        aug_mask_1 = augmented_1['mask']
-        cv2.imwrite(augtrain_path + "/aug_img{}_{}.jpg".format(data, 1), aug_image_1)
-        cv2.imwrite(augmask_path + "/aug_mask{}_{}.png".format(data, 1), aug_mask_1)
+        aug_mask_1 = Image.fromarray(augmented_1['mask'])
+        cv2.imwrite(augtrain_path + "/{}_{}.tif".format(file_name, 1), aug_image_1)
+        aug_mask_1.save(augmask_path + "/{}_{}.png".format(file_name, 1))
 
         # 垂直翻转
         augmented_2 = VerticalFlip(p=1)(image=image, mask=mask)
         aug_image_2 = augmented_2['image']
-        aug_mask_2 = augmented_2['mask']
-        cv2.imwrite(augtrain_path + "/aug_img{}_{}.jpg".format(data, 2), aug_image_2)
-        cv2.imwrite(augmask_path + "/aug_mask{}_{}.png".format(data, 2), aug_mask_2)
+        aug_mask_2 = Image.fromarray(augmented_2['mask'])
+        cv2.imwrite(augtrain_path + "/{}_{}.tif".format(file_name, 2), aug_image_2)
+        aug_mask_2.save(augmask_path + "/{}_{}.png".format(file_name, 2))
 
         # 水平 + 垂直 翻转
-        augmented_3 = Flip(p=1)(image=image, mask=mask)
+        augmented_3 = Transpose(p=1)(image=image, mask=mask)
         aug_image_3 = augmented_3['image']
-        aug_mask_3 = augmented_3['mask']
-        cv2.imwrite(augtrain_path + "/aug_img{}_{}.jpg".format(data, 3), aug_image_3)
-        cv2.imwrite(augmask_path + "/aug_mask{}_{}.png".format(data, 3), aug_mask_3)
+        aug_mask_3 = Image.fromarray(augmented_3['mask'])
+        cv2.imwrite(augtrain_path + "/{}_{}.tif".format(file_name, 3), aug_image_3)
+        aug_mask_3.save(augmask_path + "/{}_{}.png".format(file_name, 3))
 
-        if data % 100 == 0:
+        if data % 1000 == 0:
             print(data)
 
 

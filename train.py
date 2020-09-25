@@ -28,7 +28,7 @@ def generate_arrays_from_file(lines, batch_size):
                 np.random.shuffle(lines)
             name = lines[i].split(',')[0]
             # 从文件中读取图像
-            img = cv.imread(base_train_path + 'image/' + name)
+            img = cv.imread(base_train_path + 'image_aug/' + name)
             img = img.astype(np.int32)
             # img = img.resize((WIDTH, HEIGHT))
             img = img / 127.5 - 1
@@ -36,7 +36,7 @@ def generate_arrays_from_file(lines, batch_size):
 
             name = (lines[i].split(',')[1]).replace("\n", "")
             # 从文件中读取图像
-            img = Image.open(base_train_path + 'label/' + name)
+            img = Image.open(base_train_path + 'label_aug/' + name)
             img = img.resize((WIDTH, HEIGHT))
             img = np.array(img)
             seg_labels = np.zeros((WIDTH, HEIGHT, NCLASSES))
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     model_dir = "models/"
     # 获取model
     model = _unet(n_classes=NCLASSES, input_height=HEIGHT, input_width=WIDTH)
-    # model.load_weights('./models/ep023-loss0.510-val_loss0.569.h5')
+    model.load_weights('./models/ep020-loss0.317-val_loss0.494_0.8242.h5')
 
     model.summary()
     # 打开数据集的txt
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(lr=1e-4),
                   metrics=['accuracy'])
-    batch_size = 14
+    batch_size = 12
     print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
     # 开始训练

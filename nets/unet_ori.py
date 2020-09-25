@@ -7,7 +7,7 @@
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import ZeroPadding2D, Conv2D, BatchNormalization, UpSampling2D, concatenate, Softmax, \
-    Reshape, MaxPooling2D, Conv2DTranspose, Input
+    Reshape, MaxPooling2D, Conv2DTranspose, Input, Dropout
 
 
 def _unet(n_classes, input_height=256, input_width=256, encoder_level=3):
